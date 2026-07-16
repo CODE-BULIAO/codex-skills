@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
-从飞书多维表格数据构建项目配置。
+从飞书多维表格记录构建项目配置。
 
 用法：
   build_profile.py --input bitable_record.json --output profile.json
+
+输入文件格式：bitable_v1_appTableRecord_search 返回的单条记录（包含 record_id 和 fields）
 """
 
 import json
@@ -45,6 +47,7 @@ def extract_text(field_value: Any) -> str | None:
 def build_project_profile(record: dict) -> dict:
     """从 bitable 记录构建项目配置。"""
     fields = record.get("fields", {})
+    record_id = record.get("record_id", "")
     
     # 提取基本信息
     site_name = extract_text(fields.get("地盤"))
@@ -52,7 +55,7 @@ def build_project_profile(record: dict) -> dict:
     paper_type = extract_text(fields.get("紙本/E-permit"))
     
     # 生成项目代码
-    project_code = f"{site_name}-{scene}".replace(" ", "-").upper()
+    project_code = f"{site_name}-{scene}".replace(" ", "-").upper() if site_name and scene else ""
     
     # 提取路由信息
     test_group_name = extract_text(fields.get("測試群組名"))
@@ -90,6 +93,11 @@ def build_project_profile(record: dict) -> dict:
     
     # 构建配置对象
     profile = {
+        "source": {
+            "record_id": record_id,
+            "bitable_app_token": "Vt0cbMdcRa6L9ZsJirJcs2tKnLg",
+            "table_id": "tbl77ycCEeb0i1y7"
+        },
         "project": {
             "name": site_name,
             "code": project_code,
@@ -107,7 +115,7 @@ def build_project_profile(record: dict) -> dict:
             "prd_token": prd_token,
             "prd_copy_url": prd_copy_link,
             "prd_copy_token": prd_copy_token,
-            "business_rules": {}  # 从文档中提取，这里留空
+            "business_rules": {}
         },
         "metadata": {
             "priority": priority,
@@ -118,21 +126,18 @@ def build_project_profile(record: dict) -> dict:
         }
     }
     
-    # 添加报告信息（如有）
     if report_link:
-        profile["report"] = {
+        profile["existing_report"] = {
             "url": report_link,
             "token": report_token
         }
     
-    # 添加关联表格信息（如有）
     if related_table_link:
         profile["related_table"] = {
             "url": related_table_link,
             "token": related_table_token
         }
     
-    # 添加 LLM 配置（如有）
     if llm_model and llm_model != "无":
         profile["llm"] = {
             "model": llm_model,
@@ -150,7 +155,6 @@ def main():
     
     args = parser.parse_args()
     
-    # 读取输入
     input_path = Path(args.input)
     if not input_path.exists():
         print(f"错误：输入文件不存在：{args.input}", file=sys.stderr)
@@ -159,17 +163,15 @@ def main():
     with open(input_path, "r", encoding="utf-8") as f:
         record = json.load(f)
     
-    # 构建配置
     profile = build_project_profile(record)
     
-    # 写入输出
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(profile, f, ensure_ascii=False, indent=2)
     
-    print(f"✓ 项目配置已生成：{args.output}")
+    print(json.dumps({"status": "READY", "out": str(args.output)}, ensure_ascii=False))
 
 
 if __name__ == "__main__":
