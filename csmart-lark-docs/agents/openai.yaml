@@ -1,0 +1,38 @@
+name: csmart-lark-docs
+display_name: "C-Smart 飞书文档读取"
+description: "从飞书多维表格读取 C-Smart 项目配置，支持所有自测技能（巡火、E-permit 等）获取测试所需的项目信息。"
+short_description: "读取飞书多维表格中的项目配置信息，包括地盤、場景、PRD、测试群 ID 等。"
+
+# 技能触发条件
+triggers:
+  - "读取飞书项目配置"
+  - "查询飞书表格"
+  - "获取测试群 ID"
+  - "读取 PRD 文档"
+  - "提取业务规则"
+  - "查询地盤和場景"
+
+# 使用的工具
+tools:
+  - lark-mcp
+
+# 技能依赖
+dependencies:
+  - lark-mcp 已安装并认证
+
+# 输出格式
+output_format: |
+  生成 project-profile.json，包含：
+  - project: 项目名称、代码、场景
+  - routing: 测试群和生产群信息
+  - requirements: PRD 链接、业务规则
+  - metadata: 优先级、开发状态、负责人等
+
+# 使用示例
+examples:
+  - prompt: "读取 BMM柴灣 外牆棚架 的项目配置"
+    response: "已提取项目配置，生成 project-profile.json"
+  - prompt: "查询启德医院巡火的测试群 ID"
+    response: "测试群 ID: 120363407664945061@g.us"
+  - prompt: "从 PRD 文档提取业务规则"
+    response: "已提取触发词、点位字典、调度规则等"

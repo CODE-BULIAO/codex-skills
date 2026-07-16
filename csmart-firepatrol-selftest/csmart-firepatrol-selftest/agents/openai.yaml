@@ -1,0 +1,4 @@
+interface:
+  display_name: "C-Smart 巡火自测"
+  short_description: "通用巡火自测技能，支持任意巡火项目。通过项目配置动态获取点位、触发词、群 ID 和调度时间，执行固定回归与增量测试并生成完整测试报告"
+  default_prompt: "使用 $csmart-firepatrol-selftest 读取项目配置和需求文档，从通用契约模板动态生成测试计划，安全执行测试并输出测试报告。"

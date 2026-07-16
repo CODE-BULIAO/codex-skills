@@ -1,0 +1,33 @@
+{
+  "project": {
+    "name": "BLY 葛量洪巡夜",
+    "code": "BLY-FIREPATROL"
+  },
+  "routing": {
+    "test_groups": [
+      {"name": "BLY葛量洪巡夜测试群", "id": "120363407664945061@g.us"}
+    ],
+    "production_groups": ["120363xxxxxxxxxxxxxx@g.us"]
+  },
+  "requirements": {
+    "trigger_words": ["安全相", "巡夜"],
+    "zones": {
+      "Zone A": ["A1", "A2", "A3"],
+      "Zone BC": ["B1", "B2", "B3", "C4", "C5"],
+      "Zone D": ["D1", "D2"]
+    },
+    "separators": ["-", "~", "—"],
+    "manual_summary_words": ["总结", "總結"],
+    "summary_schedule": "cron 0 20,22 * * *",
+    "business_day_rule": {"operational_start_hour": 18}
+  },
+  "implementation": {
+    "runtime_env_vars": {
+      "production_group": "GROUP_FIREPATROL_BLY",
+      "test_group": "GROUP_FIREPATROL_BLY_TEST",
+      "zone_variable": "BLY_FIRE_PATROL_ZONES"
+    },
+    "data_file": "fire_patrol.json",
+    "profile_file": "fire_patrol_process.js"
+  }
+}
